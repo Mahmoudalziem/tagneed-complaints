@@ -1,0 +1,15 @@
+.slick-slider {
+    .slick-arrow {
+        &::before {
+            color: $brown;
+            font-size: 20px;
+        }
+    }
+    .slick-list {
+        .slick-track {
+            .slick-slide {
+                padding: 5px;
+            }
+        }
+    }
+}

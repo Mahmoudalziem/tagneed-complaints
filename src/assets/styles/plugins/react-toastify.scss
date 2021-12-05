@@ -1,0 +1,14 @@
+.Toastify {
+    .Toastify__toast-container {
+        top: 4em;
+    }
+    .Toastify__toast {
+        .Toastify__toast-body {
+            font-family: 'Cairo';
+            font-weight: 600;
+            font-size: 20px;
+        }
+        direction: rtl;
+        min-width:340px;
+    }
+}

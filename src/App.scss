@@ -1,0 +1,12 @@
+@import "@fontsource/cairo";
+@import "./assets/styles/foundation/variables";
+@import '~antd/dist/antd.css';
+@import 'react-toastify/dist/ReactToastify.min.css';
+@import "~@mdi/font/scss/materialdesignicons";
+
+/* === Plugin Overrides === */
+
+@import "./assets/styles/plugins/mudatatable";
+@import "./assets/styles/plugins/antd";
+@import "./assets/styles/plugins/react-toastify";
+//// components
