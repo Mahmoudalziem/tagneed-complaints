@@ -1,7 +1,6 @@
 import express from 'express'
 import complaints from '../controllers/complaintsController'
 
-
 const Router = express.Router();
 
 Router.get('/', complaints.index);

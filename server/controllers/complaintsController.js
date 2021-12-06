@@ -170,7 +170,6 @@ class Complaints {
     };
 
     show = async(req, res) => {
-        console.log((req.params.id).split("-"))
         let tribleNum = (req.params.id).split("-");
 
         tribleNum = {
@@ -183,6 +182,7 @@ class Complaints {
             .findOne({ tribleNum: tribleNum })
             .then(response => {
                 if (response) {
+                    response.image = `http://${req.headers.host}/${response.image}`;
                     res.status(201).json({
                         status: true,
                         data: response

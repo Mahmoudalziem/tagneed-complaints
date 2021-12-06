@@ -66,6 +66,11 @@ const userSchema = mongoose.Schema({
     image: {
         type: String,
         description: "image must be an string and is required",
+    },
+    confirm: {
+        type: Boolean,
+        default: false,
+        required: false
     }
 });
 

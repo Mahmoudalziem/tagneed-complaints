@@ -1,7 +1,6 @@
 import express from 'express'
 import commission from '../controllers/commissionController'
 
-
 const Router = express.Router();
 
 Router.get('/', commission.index);

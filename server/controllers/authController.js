@@ -1,63 +1,54 @@
-import Joi from 'joi'
-import UsersModel from '../models/complaints'
 import bcrypt from 'bcrypt'
+import { userModel, validateUser } from "../models/users";
+import _ from "lodash";
 
+const Index = async(req, res) => {
+    const { error } = validateUser(req.body);
+    if (error) return res.send(error.details[0].message);
+    let user = await userModel.findOne({ name: req.body.name });
 
-const index = async(req, res) => {
-
-    const schema = Joi.object({
-        name: Joi.string().min(3).required(),
-        email: Joi.string().email().required(),
-        password: Joi.string().min(8).required()
-    })
-
-    const result = schema.validate(req.body);
-
-    if (result.error) {
-
-        return res.status(400).send(result.error.details[0].message);
-
-    }
-
-    const Data = new UsersModel(req.body);
-
+    // check if already registered user
+    if (user) return res.send("User already registerd!");
+    user = new userModel(_.pick(req.body, ["name", "password", "role"]));
+    // decrypting password
     const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
 
-    Data.password = await bcrypt.hash(Data.password, salt);
+    // saving to db and sendig response
+    await user.save();
 
-    return Data.save().then((success) => res.status(201).send(success));
-
-    // return res.render('index', { name: "Mahmoud Abd Alziem" });
-};
-const user = async(req, res) => {
-
-    return res.render('user', { name: "ahmed reda hamza" });
-};
+    const token = user.generateToken();
+    res
+        .header("x-auth-token", token)
+        .send(_.pick(user, ["_id", "name", "role"]));
+    // res.send({ "accessToken": token });};
+}
 
 const Login = async(req, res) => {
 
-    const User = await UsersModel.findOne({ email: req.body.email });
+    let user = await userModel.findOne({ name: req.body.name });
+    if (!user) return res.send({
+        message: "خطا بكلمة السر او اسم المستخدم",
+        status: false
+    });
 
-    if (User) {
+    const isCorrectPassword = await bcrypt.compare(
+        req.body.password,
+        user.password
+    );
+    if (!isCorrectPassword)
+        return res.send({
+            message: "خطا بكلمة السر او اسم المستخدم",
+            status: false
+        });
 
-        // return res.status(201).json(req.body.password);
+    const token = user.generateToken();
 
-        const ValidatePasword = await bcrypt.compare(req.body.password, User.password);
-
-        // return res.status(201).json(ValidatePasword);
-
-        if (ValidatePasword) {
-
-            res.status(200).json({ message: "Success Login" });
-
-        } else {
-
-            res.status(400).json({ error: "Invalid Email Or Password" });
-        }
-    } else {
-        res.status(401).json({ error: "User does not exist" });
-
-    }
+    res.send({
+        message: "تم التسجيل بنجاح",
+        status: true,
+        data: token
+    });
 };
 
-export { index, user, Login };
+export { Index, Login };
